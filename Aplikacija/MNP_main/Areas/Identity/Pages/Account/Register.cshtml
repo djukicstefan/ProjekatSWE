@@ -1,0 +1,122 @@
+﻿@page
+@model RegisterModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Register"];
+}
+
+<link href="~/css/login-register.css" rel="stylesheet" />
+<h1>@ViewData["Title"]</h1>
+
+<div class="mainContainter">
+    <div class="containter col">
+        <div class="pozadina">
+            <form class="glavnaForma" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col">
+                        <label asp-for="Input.FirstName">@Localizer["Name"]</label>
+                        <input asp-for="Input.FirstName"
+                               type="text"
+                               class="form-control"
+                               id="inputEmail4"
+                               placeholder="@Localizer["Your name"]" />
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <label asp-for="Input.LastName">@Localizer["Surname"]</label>
+                        <input asp-for="Input.LastName"
+                               type="text"
+                               class="form-control"
+                               id="inputEmail4"
+                               placeholder="@Localizer["Your surname"]" />
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.UserName">@Localizer["Username"]</label>
+                    <input asp-for="Input.UserName"
+                           type="text"
+                           class="form-control"
+                           id="inputEmail4"
+                           placeholder="@Localizer["Username"]" />
+                    <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.UMCN">@Localizer["UMCN"]</label>
+                    <input asp-for="Input.UMCN"
+                           type="text"
+                           class="form-control"
+                           id="inputEmail4"
+                           placeholder="@Localizer["UMCN"]" />
+                    <span asp-validation-for="Input.UMCN" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Email">Email</label>
+                    <input asp-for="Input.Email"
+                           type="text"
+                           class="form-control"
+                           id="inputEmail4"
+                           placeholder="Email" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Address">@Localizer["Address"]</label>
+                    <input asp-for="Input.Address"
+                           type="text"
+                           class="form-control"
+                           id="inputEmail4"
+                           placeholder="@Localizer["Address"]" />
+                    <span asp-validation-for="Input.Address" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.PhoneNumber">@Localizer["Phone number"]</label>
+                    <input asp-for="Input.PhoneNumber"
+                           type="text"
+                           class="form-control"
+                           id="inputEmail4"
+                           placeholder="+381 64...." />
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.CardNumber">@Localizer["Card number"]</label>
+                    <input asp-for="Input.CardNumber"
+                           type="text"
+                           class="form-control"
+                           id="inputAddress2"
+                           placeholder="@Localizer["Card number"]" />
+                    <span asp-validation-for="Input.CardNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Password">@Localizer["Password"]</label>
+                    <input asp-for="Input.Password"
+                           type="password"
+                           class="form-control"
+                           id="inputAddress2"
+                           placeholder="@Localizer["Password"]" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.ConfirmPassword">@Localizer["Confirm password"]</label>
+                    <input asp-for="Input.ConfirmPassword"
+                           type="password"
+                           class="form-control"
+                           id="inputAddress2"
+                           placeholder="@Localizer["Enter the password again"]" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <div style="margin-top: 3%;">
+                    <button type="submit" class="btn btn-primary">@Localizer["Register"]</button>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

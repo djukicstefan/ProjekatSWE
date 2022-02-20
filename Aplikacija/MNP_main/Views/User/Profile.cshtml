@@ -1,0 +1,292 @@
+﻿@using MNP_main.Models;
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@model UserViewModel
+@{
+    ViewData["Title"] = Localizer["Profile"];
+}
+
+<link href="~/css/profil.css" rel="stylesheet" />
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <h1 class="menu-title">@Localizer["My profile"]</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <img class="menu-title-divider" src="../img/divider.png" alt="">
+</div>
+
+<div class="container">
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>@Localizer["Name"]:</th>
+                <td colspan="2">@Model.FirstName</td>
+            </tr>
+            <tr>
+                <th>@Localizer["Surname"]:</th>
+                <td colspan="2">@Model.LastName</td>
+            </tr>
+            <tr>
+                <th>@Localizer["UCMN"]:</th>
+                <td colspan="2">@Model.UCMN</td>
+            </tr>
+            @if (!User.IsInRole("Worker") && !User.IsInRole("Admin") && !User.IsInRole("DeliveryGuy"))
+            {
+                <tr>
+                    <th>@Localizer["Card number"]:</th>
+                    <td colspan="2">@Model.CardNumber</td>
+                </tr>
+            }
+            <tr>
+                <th>@Localizer["Phone number"]:</th>
+                <td>@Model.PhoneNumber</td>
+                <td>
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#exampleModalCenter1">
+                        @Localizer["Change"]
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <th>@Localizer["Address"]:</th>
+                <td>@Model.Address</td>
+                <td>
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#exampleModalCenter2">
+                        @Localizer["Change address"]
+                    </button>
+                </td>
+            </tr>
+            @if (!User.IsInRole("Worker") && !User.IsInRole("Admin") && !User.IsInRole("DeliveryGuy"))
+            {
+                <tr>
+                    <th>@Localizer["Balance"]:</th>
+                    <td>@Model.Balance</td>
+                    <td>
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#exampleModalCenter">
+                            @Localizer["Payment"]
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal"
+     id="exampleModalCenter"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">
+                    @Localizer["Payment"]
+                </h5>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" action="BalanceChange">
+                    <div class="form-row">
+                        <div class="form-group" style="margin-right: 2%; width: 50%">
+                            <label>@Localizer["Name"]</label>
+                            <input name="FirstName"
+                                   type="text"
+                                   class="form-control"
+                                   id="inputEmail4"
+                                   placeholder="@Localizer["Name"]" />
+                        </div>
+                        <div class="form-group" style="width: 50%">
+                            <label for="inputPassword4">@Localizer["Surname"]</label>
+                            <input name="LastName"
+                                   type="text"
+                                   class="form-control"
+                                   id="inputPassword4"
+                                   placeholder="@Localizer["Surname"]" />
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 1%">
+                        <label for="inputAddress">@Localizer["Card expiration date"]</label>
+                        <select name="expireMM" id="expireMM">
+                            <option value="">@Localizer["Month"]</option>
+                            <option value="01">@Localizer["Januray"]</option>
+                            <option value="02">@Localizer["February"]</option>
+                            <option value="03">@Localizer["March"]</option>
+                            <option value="04">@Localizer["April"]</option>
+                            <option value="05">@Localizer["May"]</option>
+                            <option value="06">@Localizer["June"]</option>
+                            <option value="07">@Localizer["July"]</option>
+                            <option value="08">@Localizer["August"]</option>
+                            <option value="09">@Localizer["September"]</option>
+                            <option value="10">@Localizer["October"]</option>
+                            <option value="11">@Localizer["November"]</option>
+                            <option value="12">@Localizer["December"]</option>
+                        </select>
+                        <select name="expireYY" id="expireYY">
+                            <option value="">@Localizer["Year"]</option>
+                            <option value="21">2021</option>
+                            <option value="22">2022</option>
+                            <option value="23">2023</option>
+                            <option value="24">2024</option>
+                            <option value="25">2025</option>
+                        </select>
+                        <input class="inputCard"
+                               type="hidden"
+                               name="expiry"
+                               id="expiry"
+                               maxlength="4" />
+                    </div>
+                    <div class="form-group">
+                        <label>@Localizer["Bank card number"]</label>
+                        <input type="text"
+                               class="form-control"
+                               id="inputAddress2"
+                               placeholder="@Localizer["Bank card number"]" />
+                        <div class="form-group">
+                            <label for="inputAddress2">CVC</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="inputAddress2"
+                                   placeholder="CVC" />
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress2">@Localizer["For payment"]</label>
+                            <input name="Balance"
+                                   type="number"
+                                   class="form-control"
+                                   id="moneyPlace"
+                                   placeholder="@Localizer["Desired amount"]" />
+                        </div>
+                    </div>
+                    <div>
+                        <input type="submit"
+                               value="@Localizer["Submit"]"
+                               name="dugme1"
+                               class="btn btn-secondary" />
+
+
+                        <input type="submit"
+                               value="@Localizer["Close"]"
+                               name="dugme2"
+                               class="btn btn-secondary"
+                               data-dismiss="modal" />
+
+
+                    </div>
+                </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal"
+     id="exampleModalCenter1"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">
+                    @Localizer["Phone number"]
+                </h5>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" action="PhoneNumberChange">
+                    <div class="form-group">
+                        <label>@Localizer["New phone number"]</label>
+                        <input name="PhoneNumber"
+                               type="text"
+                               class="form-control"
+                               placeholder="+381 61..." />
+                    </div>
+                    <div>
+                        <input type="submit"
+                               value="@Localizer["Submit"]"
+                               name="dugme1"
+                               class="btn btn-secondary" />
+
+
+                        <input type="submit"
+                               value="@Localizer["Close"]"
+                               name="dugme2"
+                               class="btn btn-secondary"
+                               data-dismiss="modal" />
+
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="modal"
+     id="exampleModalCenter2"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">
+                    @Localizer["Address change"]
+                </h5>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" action="AddressChange">
+                    <div class="form-group">
+                        <label>@Localizer["New address"]</label>
+                        <input name="Address"
+                               type="text"
+                               class="form-control"
+                               placeholder="@Localizer["New address"]" />
+                    </div>
+                    <div>
+                        <input type="submit"
+                               value="@Localizer["Submit"]"
+                               name="dugme1"
+                               class="btn btn-secondary" />
+
+
+                        <input type="submit"
+                               value="@Localizer["Close"]"
+                               name="dugme2"
+                               class="btn btn-secondary"
+                               data-dismiss="modal" />
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>

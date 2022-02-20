@@ -1,0 +1,100 @@
+﻿@model List<FoodViewModel>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Add food"];
+}
+
+<div class="container">
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <img class="menu-title-divider" src="../img/divider.png" alt="">
+    </div>
+    <h2 class="menu-meal text-center">@Localizer["Add new food"]</h2>
+
+
+    <div class="row justify-content-lg-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body menu-title">
+
+                    <form class="addFoodForm" method="post">
+                        <div class="form-group">
+                            <input type="text" name="Name" class="form-control" id="foodName" placeholder="@Localizer["Food name..."]">
+                        </div>
+
+                        <div class="form-group">
+                            <textarea class="form-control" name="Description" id="foodDescription" placeholder="@Localizer["Food description"]" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <select class="form-control" name="Meal" id="mealType">
+                                <option selected>@Localizer["Meal..."]</option>
+                                <option value="0">@Localizer["Breakfast"]</option>
+                                <option value="1">@Localizer["Lunch"]</option>
+                                <option value="2">@Localizer["Dinner"]</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <select class="form-control" name="Dish" id="dishType">
+                                <option selected>@Localizer["Type of food..."]</option>
+                                <option value="0">@Localizer["Main course"]</option>
+                                <option value="1">@Localizer["Soup"]</option>
+                                <option value="2">@Localizer["Salad"]</option>
+                                <option value="3">@Localizer["Dessert"]</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary mb-2">@Localizer["Add"]</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <img class="menu-title-divider" src="../img/divider.png" alt="">
+    </div>
+    <h1 class="menu-meal text-center">Hrana</h1>
+
+    <div class="row justify-content-lg-center">
+        <div class="col-lg-8">
+            <table class="table food-table">
+                <thead>
+                    <tr>
+                        <th scope="col">@Localizer["Name"]</th>
+                        <th scope="col">@Localizer["Description"]</th>
+                        <th scope="col">@Localizer["Meal"]</th>
+                        <th scope="col">@Localizer["Type of food"]</th>
+                        <th scope="col">@Localizer["Action"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model)
+                    {
+                        <tr>
+                            <td>@x.Name</td>
+                            <td>@x.Description</td>
+                            <td>@Localizer[@x.Dish.ToString()]</td>
+                            <td>@Localizer[@x.Meal.ToString()]</td>
+                            <td>
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Food",
+                                    routeValues: new
+                                    {
+                                        foodId = x.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

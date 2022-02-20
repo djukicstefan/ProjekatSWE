@@ -1,0 +1,747 @@
+﻿@model List<Menu>
+@using DAL.Models;
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Edit menu"];
+
+    var x = ViewContext.HttpContext.Request.Query["day"];
+    var day = (Menu.DaysInWeek)(int.TryParse(x.ToString() ?? "0", out int dayIndex) ? dayIndex : 0);
+    int dayInt = (int)day;
+
+    List<Food> foodAll = ViewBag.foods as List<Food>;
+    List<Food> breakfastAll = foodAll.Where(x => x.Meal == Food.MealType.Breakfast).ToList();
+    List<Food> lunchAll = foodAll.Where(x => x.Meal == Food.MealType.Lunch).ToList();
+    List<Food> dinnertAll = foodAll.Where(x => x.Meal == Food.MealType.Dinner).ToList();
+
+    List<Food> breakfastInMenu = Model.Find(x => x.Day == day).Foods.Where(x => x.Meal == Food.MealType.Breakfast).ToList();
+    List<Food> lunchInMenu = Model.Find(x => x.Day == day).Foods.Where(x => x.Meal == Food.MealType.Lunch).ToList();
+    List<Food> dinnerInMenu = Model.Find(x => x.Day == day).Foods.Where(x => x.Meal == Food.MealType.Dinner).ToList();
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <h1 class="menu-title">@Localizer["Menu"]</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg">
+            <form method="get">
+                <div class="form-group form-row justify-content-center align-items-center m-4">
+                    <!--<h4 class="menu-meal col-12 col-md-4 m-0">@Localizer["Choose a day"]</h4>-->
+                    <select name="day" class="form-control col-md-5 col-12" id="daySelect">
+                        @foreach (var d in Model)
+                        {
+                            @if (@day == d.Day)
+                            {
+                                <option value="@((int)d.Day)" selected>@Localizer[@d.Day.ToString()]</option>
+                            }
+                            else
+                            {
+                                <option value="@((int)d.Day)">@Localizer[@d.Day.ToString()]</option>
+                            }
+                        }
+                    </select>
+                    <button class="btn btn-primary col-12 col-md-auto" type="submit">@Localizer["Submit"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<!-- DORUČAK -->
+<div class="container test">
+
+    <div class="row d-flex flex-column justify-content-center align-items-center">
+        <h1 class="menu-meal text-center">@Localizer["Breakfast"]</h1>
+    </div>
+
+    <div class="row">
+        <!-- DORUČAK GLAVNO -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Main meal"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var bf in breakfastInMenu)
+                                {
+                                    @if (bf.Type == Food.DishType.Main)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal col-8 px-5">
+                                <h2>@bf.Name</h2>
+                                <p>@bf.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = bf.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select name="foodID" id="breakfastMainSelect">
+                                    <option value="-1" selected>Odaberi hranu...</option>
+                                    @foreach (var bf in breakfastAll)
+                                    {
+                                        bool isInMenu = breakfastInMenu.Find(x => x.Id == bf.Id) != null;
+
+                                        @if (bf.Type == Food.DishType.Main && !isInMenu)
+                                        {
+                                            <option value="@bf.Id">@bf.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF DORUČAK GLAVNO -->
+        <!-- DORUČAK NAPITAK -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Beverage"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var bf in breakfastInMenu)
+                {
+                    @if (bf.Type == Food.DishType.Desert)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal  col-8 px-2">
+                                <h2>@bf.Name</h2>
+                                <p>@bf.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = bf.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select flex-grow-1" name="foodID" id="breakfastDesertSelect">
+                                    <option selected>@Localizer["Choose food..."]</option>
+                                    @foreach (var bf in breakfastAll)
+                                    {
+                                        bool isInMenu = breakfastInMenu.Find(x => x.Id == bf.Id) != null;
+
+                                        @if (bf.Type == Food.DishType.Desert && !isInMenu)
+                                        {
+                                            <option value="@bf.Id">@bf.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF DORUČAK NAPITAK -->
+    </div>
+</div>
+<!-- END OF DORUČAK -->
+
+<br>
+
+<!-- RUČAK -->
+<div class="container">
+
+    <div class="row d-flex flex-column justify-content-center align-items-center">
+        <h1 class="menu-meal text-center">@Localizer["Lunch"]</h1>
+    </div>
+
+    <div class="row">
+        <!-- RUČAK GLAVNO -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Main meal"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var lu in lunchInMenu)
+                {
+                    @if (lu.Type == Food.DishType.Main)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal col-8 px-2">
+                                <h2>@lu.Name</h2>
+                                <p>@lu.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = lu.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select class="col-8" name="foodID" id="lunchMainSelect">
+                                    <option selected>@Localizer["Choose food..."]</option>
+                                    @foreach (var lu in lunchAll)
+                                    {
+                                        bool isInMenu = lunchInMenu.Find(x => x.Id == lu.Id) != null;
+
+                                        @if (lu.Type == Food.DishType.Main && !isInMenu)
+                                        {
+                                            <option value="@lu.Id">@lu.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF RUČAK GLAVNO -->
+        <!-- RUČAK SUPA -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Soup"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var lu in lunchInMenu)
+                {
+                    @if (lu.Type == Food.DishType.Soup)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal col-8 px-2">
+                                <h2>@lu.Name</h2>
+                                <p>@lu.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = lu.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select name="foodID" id="lunchMainSelect">
+                                    <option selected>@Localizer["Choose food..."]</option>
+                                    @foreach (var lu in lunchAll)
+                                    {
+                                        bool isInMenu = lunchInMenu.Find(x => x.Id == lu.Id) != null;
+
+                                        @if (lu.Type == Food.DishType.Soup && !isInMenu)
+                                        {
+                                            <option value="@lu.Id">@lu.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF RUČAK SUPA -->
+        <!-- RUČAK SALATA -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Salad"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var lu in lunchInMenu)
+                {
+                    @if (lu.Type == Food.DishType.Salad)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal col-8 px-2">
+                                <h2>@lu.Name</h2>
+                                <p>@lu.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = lu.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select name="foodID" id="lunchMainSelect">
+                                    <option selected>@Localizer["Choose food..."]</option>
+                                    @foreach (var lu in lunchAll)
+                                    {
+                                        bool isInMenu = lunchInMenu.Find(x => x.Id == lu.Id) != null;
+
+                                        @if (lu.Type == Food.DishType.Salad && !isInMenu)
+                                        {
+                                            <option value="@lu.Id">@lu.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF RUČAK Salata -->
+        <!-- RUČAK DEZERT -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Dessert"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var lu in lunchInMenu)
+                {
+                    @if (lu.Type == Food.DishType.Desert)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal col-8 px-2">
+                                <h2>@lu.Name</h2>
+                                <p>@lu.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = lu.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select name="foodID" id="lunchMainSelect">
+                                    <option selected>@Localizer["Choose food..."]</option>
+                                    @foreach (var lu in lunchAll)
+                                    {
+                                        bool isInMenu = lunchInMenu.Find(x => x.Id == lu.Id) != null;
+
+                                        @if (lu.Type == Food.DishType.Desert && !isInMenu)
+                                        {
+                                            <option value="@lu.Id">@lu.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF RUČAK DEZERT -->
+    </div>
+</div>
+<!-- END OF RUČAK -->
+
+<br>
+
+<!-- VEČERA -->
+<div class="container">
+
+    <div class="row d-flex flex-column justify-content-center align-items-center">
+        <h1 class="menu-meal text-center">@Localizer["Dinner"]</h1>
+    </div>
+
+    <div class="row">
+        <!-- VEČERA GLAVNO -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Main meal"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var di in dinnerInMenu)
+                {
+                    @if (di.Type == Food.DishType.Main)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal col-8 px-2">
+                                <h2>@di.Name</h2>
+                                <p>@di.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = di.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select class="col-8" name="foodID" id="lunchMainSelect">
+                                    <option selected>@Localizer["Choose food..."]</option>
+                                    @foreach (var di in dinnertAll)
+                                    {
+                                        bool isInMenu = dinnerInMenu.Find(x => x.Id == di.Id) != null;
+
+                                        @if (di.Type == Food.DishType.Main && !isInMenu)
+                                        {
+                                            <option value="@di.Id">@di.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF VEČERA GLAVNO -->
+        <!-- VEČERA SALATA -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Salad"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var di in dinnerInMenu)
+                {
+                    @if (di.Type == Food.DishType.Salad)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal col-8 px-2">
+                                <h2>@di.Name</h2>
+                                <p>@di.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = di.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select name="foodID" id="lunchMainSelect">
+                                    <option selected>@Localizer["Choose food..."]</option>
+                                    @foreach (var di in dinnertAll)
+                                    {
+                                        bool isInMenu = dinnerInMenu.Find(x => x.Id == di.Id) != null;
+
+                                        @if (di.Type == Food.DishType.Salad && !isInMenu)
+                                        {
+                                            <option value="@di.Id">@di.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF VEČERA SALATA -->
+        <!-- VEČERA DEZERT -->
+        <div class="col-lg-6 p-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <img class="menu-title-divider" src="../img/divider.png" alt="">
+                        </div>
+                        <h1 class="menu-meal text-center">@Localizer["Dessert"]</h1>
+                    </div>
+                </div>
+
+                @foreach (var di in dinnerInMenu)
+                {
+                    @if (di.Type == Food.DishType.Desert)
+                    {
+                        <div class="row food-row">
+                            @*<div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                <img class="rounded" style="height: 100px; width: auto;" src="../img/food-1.jpg" alt="Thumbnail image">
+                            </div>*@
+                            <div class="menu-meal col-8 px-2">
+                                <h2>@di.Name</h2>
+                                <p>@di.Description</p>
+                            </div>
+                            <div class="col-2 d-flex flex-column justify-content-center align-items-center">
+                                @Html.ActionLink(
+                                    Localizer["Delete"].Value,
+                                    "RemoveFood",
+                                    "Menu",
+                                    routeValues: new
+                                    {
+                                        dayIndex = (int)day,
+                                        foodId = di.Id
+                                    },
+                                    new { @class = "btn btn-danger" }
+                                )
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="input-group">
+                            @using (Html.BeginForm("AddFood", "Menu", FormMethod.Post, new { @class = "foodSelect row" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <select name="foodID" id="lunchMainSelect">
+                                    <option selected>@Localizer["Choose food..."]</option>
+                                    @foreach (var di in dinnertAll)
+                                    {
+                                        bool isInMenu = dinnerInMenu.Find(x => x.Id == di.Id) != null;
+
+                                        @if (di.Type == Food.DishType.Desert && !isInMenu)
+                                        {
+                                            <option value="@di.Id">@di.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="input-group-append col-auto">
+                                    <button class="btn btn-success" type="submit">@Localizer["Add"]</button>
+                                </div>
+                                <div class="input-group-append col-auto">
+                                    <input type="number" name="dayIndex" value="@((int)day)" hidden />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF VEČERA DEZERT -->
+    </div>
+</div>
+<!-- END OF VEČERA -->
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <img class="menu-title-divider" src="../img/divider.png" alt="">
+</div>

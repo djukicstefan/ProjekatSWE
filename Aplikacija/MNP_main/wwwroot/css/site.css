@@ -1,0 +1,217 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.navbar {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+}
+
+
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    background: url("../img/back.webp") no-repeat center center fixed;
+    background-size: cover;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+}
+
+.footer > .row {
+    color: rgba(255, 253, 253, 0.603);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+/*------------------------------------------------------------------------------------------------*/
+
+.card {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 64px;
+    object-fit: cover;
+}
+
+.card-title,
+.card-text {
+    text-shadow: 0px 0px 2px #000;
+    color: #EEE;
+}
+
+.menu-title,
+.menu-meal {
+    color: #FFF;
+    text-shadow: 0px 0px 4px #000;
+}
+
+.menu-title-divider {
+    width: 512px;
+}
+
+
+/* ------ Main page ------------------------ */
+
+.menu-meal {
+    margin-bottom: 16px;
+}
+
+.food-row {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    margin-bottom: 8px;
+}
+
+.food-row [class *= "col-"] {
+    padding: 0;
+}
+
+.food-row .img-fluid {
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+/* ------ Comments ------------------------ */
+.commentContainer {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+.commentHeader p {
+    font-style: italic;
+}
+
+.commentHeader p,
+.commentBody p {
+    color: #FFF;
+    text-shadow: 0px 0px 4px #000;
+}
+
+.commentHeader hr {
+    width: 90%;
+    background-color: #FFF3;
+}
+
+.commentBody .col {
+    word-wrap: break-word;
+}
+
+.commentContainer hr {
+    background-color: #FFF3;
+}
+
+.editUserRow,
+.editBtnTxt,
+.deleteBtnTxt {
+    color: #FFF;
+    text-shadow: 0px 0px 4px #000;
+}
+
+/* Table */
+thead > tr > th {
+    color: rgba(255, 253, 253, 0.603);
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #FFF;
+    text-shadow: 0px 0px 4px #000;
+    font-weight: bold;
+}
+
+th {
+    border: none !important;
+}
+
+td {
+    color: #FFF;
+    text-shadow: 0px 0px 4px #000;
+    border: none !important;
+}
+
+tr {
+    color: rgba(255, 253, 253, 0.603);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+tr:nth-child(2n) {
+    color: rgba(255, 253, 253, 0.603);
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.deleteComment {
+    width: 52px;
+    height: 52px;
+    margin-top: 16px;
+    margin-right: 16px;
+}
+
+.deleteComment img {
+    width: 100%;
+    height: auto;
+    margin-top: 6px;
+}

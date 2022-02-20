@@ -1,0 +1,117 @@
+﻿@using DAL.Models;
+@using Microsoft.AspNetCore.Http
+@model Menu
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    string selectedFood = Context.Session.GetString("selectedFood") ?? "";
+    var selectedIds = selectedFood.Split(',').Where(x => int.TryParse(x, out _)).Select(x => int.Parse(x));
+
+    var foods = Model.Foods;
+
+    var orderFoods = foods.Where(x => selectedIds.Contains(x.Id)).ToList();
+
+    Food dinnerMain = orderFoods.Find(x => x.Meal == Food.MealType.Dinner && x.Type == Food.DishType.Main);
+    Food dinnerSalad = orderFoods.Find(x => x.Meal == Food.MealType.Dinner && x.Type == Food.DishType.Salad);
+    Food dinnerDesert = orderFoods.Find(x => x.Meal == Food.MealType.Dinner && x.Type == Food.DishType.Desert);
+}
+
+<!-- VEČERA -->
+<div class="container">
+    <div class="row d-flex flex-column justify-content-center align-items-center">
+        <h1 class="menu-meal text-center">@Localizer["Dinner"]</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 p-2">
+            <div class="card text-center">
+                <img class="card-img-top" src="../img/food-1.jpg" alt="Card image cap">
+                <div class="card-body">
+                    @if(dinnerMain == null)
+                    { 
+                    <h4 class="card-title">@Localizer["Main meal"]</h4>
+                    <p class="card-text text-center">
+                        @Localizer["Choose main meal."]
+                    </p>
+                    }
+                    else
+                    {
+                        <h4 class="menu-meal">@dinnerMain.Name</h4>
+                    }
+                    @Html.ActionLink(
+                        Localizer["Choose"].Value,
+                        "SelectFood",
+                        "Food",
+                        routeValues: new
+                        {
+                            mealType = 2,
+                            dishType = 0
+                        },
+                        new { @class = "btn btn-primary" }
+                    )
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 p-2">
+            <div class="card text-center">
+                <img class="card-img-top" src="../img/food-2.jpg" alt="Card image cap">
+                <div class="card-body">
+                    @if (dinnerSalad == null)
+                    {
+                        <h4 class="card-title">@Localizer["Salad"]</h4>
+                        <p class="card-text text-center">
+                            @Localizer["Choose salad."]
+                        </p>
+                    }
+                    else
+                    {
+                        <h4 class="menu-meal">@dinnerSalad.Name</h4>
+                    }
+                    @Html.ActionLink(
+                        Localizer["Choose"].Value,
+                        "SelectFood",
+                        "Food",
+                        routeValues: new
+                        {
+                            mealType = 2,
+                            dishType = 2
+                        },
+                        new { @class = "btn btn-primary" }
+                    )
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 p-2">
+            <div class="card text-center">
+                <img class="card-img-top" src="../img/food-3.jpg" alt="Card image cap">
+                <div class="card-body">
+                    @if (dinnerDesert == null)
+                    {
+                        <h4 class="card-title">@Localizer["Dessert"]</h4>
+                        <p class="card-text text-center">
+                            @Localizer["Choose dessert."]
+                        </p>
+                    }
+                    else
+                    {
+                        <h4 class="menu-meal">@dinnerDesert.Name</h4>
+                    }
+                    @Html.ActionLink(
+                        Localizer["Choose"].Value,
+                        "SelectFood",
+                        "Food",
+                        routeValues: new
+                        {
+                            mealType = 2,
+                            dishType = 3
+                        },
+                        new { @class = "btn btn-primary" }
+                    )
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END OF VEČERA -->

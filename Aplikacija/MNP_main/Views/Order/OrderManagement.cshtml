@@ -1,0 +1,65 @@
+﻿@model List<OrderViewModel>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Order Management"];
+}
+
+<link href="~/css/worker-orders.css" rel="stylesheet" />
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <h1 class="menu-title">@ViewData["Title"]</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <img class="menu-title-divider" src="../img/divider.png" alt="">
+</div>
+
+
+<div class="container">
+    <table class="table text-center">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer["Order number"]</th>
+                <th scope="col">@Localizer["Order date"]</th>
+                <th scope="col">@Localizer["Order forwarding"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                @if (o.Deliverer == null)
+                { 
+                    <tr>
+                        <td scope="row">@o.Id</td>
+                        <td>@o.OrderDate</td>
+                        <td>
+                            @Html.ActionLink(
+                            Localizer["Forward"].Value,
+                            "OrderInformation",
+                            "Order",
+                            routeValues: new
+                            {
+                                Id = o.Id
+                            },
+                            htmlAttributes: new { @class = "btn btn-primary" }
+                            )
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+

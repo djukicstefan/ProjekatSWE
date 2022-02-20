@@ -1,0 +1,102 @@
+﻿@using DAL.Models
+@inject Microsoft.AspNetCore.Identity.AspNetUserManager<User> manager
+@model List<Comment>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Comments"];
+}
+
+@SetAntiforgeryCookieAndHeader()
+
+<br />
+<br />
+<br />
+@if (!User.IsInRole("Worker") && !User.IsInRole("Admin") && !User.IsInRole("DeliveryGuy"))
+{
+    <div class="container text-center">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <h1 class="menu-title">@Localizer["Post a new comment"]</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <img class="menu-title-divider" src="../img/divider.png" alt="">
+    </div>
+    <br />
+
+    @using (Html.BeginForm("CreateComment", "Home", FormMethod.Post, new { @class = "d-flex flex-column justify-content-center align-items-center" }))
+    {
+        <textarea name="commentText" class="form-control" id="commentArea" rows="3" placeholder="@Localizer["Comment..."]"></textarea>
+        <button type="submit" class="btn btn-success btn-lg w-50">@Localizer["Send comment"]</button>
+    }
+
+    <br />
+    <br />
+}
+<div class="container text-center">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <h1 class="menu-title">@Localizer["Comments"]</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <img class="menu-title-divider" src="../img/divider.png" alt="">
+</div>
+
+@if (Model.Count > 0)
+{
+    @foreach (var x in Model)
+    {
+        <div class="container commentContainer">
+            <hr />
+            <div class="row commentBody">
+                <div class="col">
+                    <p>@x.Content</p>
+                </div>
+            </div>
+            <div class="row commentHeader">
+                <div class="col">
+                    <hr />
+                    <p class="text-right">@x.User.UserName @Localizer["commented on"] @x.CreatedAt</p>
+                </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @if (User.IsInRole("Admin") || manager.GetUserId(User) == x.User.Id)
+                    {
+                        <a class="btn btn-danger ml-3 deleteComment" href='@Url.Action("DeleteComment", "Home", new { Id = x.Id })'>
+                            <img src="~/img/trash.png" />
+                        </a>
+                    }
+                }
+            </div>
+            <hr />
+        </div>
+    }
+}
+else
+{
+    <div class="container text-center">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <h1 class="menu-title">@Localizer["No comments available"]</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <img class="menu-title-divider" src="../img/divider.png" alt="">
+</div>
+
+

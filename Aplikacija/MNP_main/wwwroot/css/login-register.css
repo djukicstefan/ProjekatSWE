@@ -1,0 +1,48 @@
+body {
+    background: url("https://static.vecteezy.com/system/resources/previews/001/948/406/large_2x/wood-table-top-for-display-with-blurred-restaurant-background-free-photo.jpg") no-repeat center center fixed;
+    background-size: cover;
+}
+
+.mainContainter {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 5%;
+}
+
+.komentari {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10%;
+    margin-right: 5%;
+    color: #FFF;
+    text-shadow: 0px 0px 4px #000;
+}
+
+.animacija {
+    animation: mover 6s linear infinite;
+    font-size: large;
+}
+
+@keyframes mover {
+    50% {
+        transform: translateY(30px);
+    }
+}
+
+.glavnaForma {
+    font-weight: bold;
+    padding: 10%;
+}
+
+.pozadina {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(100px);
+    border-radius: 15px;
+    width: 50%;
+}
+
+h1 {
+    text-shadow: 0px 0px 2px #000;
+    color: #EEE;
+}

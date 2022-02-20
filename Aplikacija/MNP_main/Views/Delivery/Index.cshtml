@@ -1,0 +1,74 @@
+﻿@model IEnumerable<DAL.Models.Order>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Orders"];
+}
+<link href="~/css/orderHistory.css" rel="stylesheet" />
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <h1 class="menu-title">@Localizer["Orders to deliver"]</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <img class="menu-title-divider" src="../img/divider.png" alt="">
+</div>
+
+<table class="table text-center">
+    <thead>
+        <tr>
+            <th>
+                @Localizer["Name"]
+            </th>
+            <th>
+                @Localizer["Address"]
+            </th>
+            <th>
+                @Localizer["Phone number"]
+            </th>
+            <th>
+                @Localizer["Special request"]
+            </th>
+            <th>
+                @Localizer["Order date"]
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @{
+                        <p>@(item.Client.FirstName + " " + item.Client.LastName)</p>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Client.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Client.PhoneNumber)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.SpecialRequest))
+                        @Html.DisplayFor(modelItem => item.SpecialRequest)
+                    else
+                        {<span>@Localizer["No special requirements"]</span>}
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDate)
+                </td>
+                <td>
+                    <a class="btn btn-primary" asp-action="Deliver" asp-route-id="@item.Id">@Localizer["Deliver"]</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

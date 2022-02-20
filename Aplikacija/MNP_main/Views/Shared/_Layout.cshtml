@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="initial-scale=1.0">
+	<title>@ViewData["Title"] - MNP</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" />
+	@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer;
+	<link rel="stylesheet" href="~/css/AddFood.css" />
+</head>
+<body style="overflow-x:hidden">
+	<header>
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light text-white mb-3">
+			<div class="container">
+				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+					<img src="~/img/logo.png" width="50" height="50" alt="">
+				</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["Home"]</a>
+                        </li>
+                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Worker") || User.IsInRole("Admin")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Food" asp-action="AddFood">@Localizer["Add food"]</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Menu" asp-action="EditMenu">@Localizer["Edit menu"]</a>
+                            </li>
+                        }
+
+
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Worker"))
+                        {
+                            <li>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="OrderManagement">@Localizer["Order Management"]</a>
+                            </li>
+                        }
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Users" asp-action="Index">@Localizer["Manage users"]</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("DeliveryGuy"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Delivery" asp-action="Index">@Localizer["Deliver Orders"]</a>
+                                </li>
+                            }
+                        }
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="ShowComments">@Localizer["Comments"]</a>
+                        </li>
+
+                    </ul>
+					<partial name="_LoginPartial" />
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<span>
+		<img src="~/img/logo.png" alt="Alternate Text" style="position:absolute; margin-left:5%;" width="150px" height="150px" />
+	</span>
+
+	<div class="container">
+		<main role="main" class="pb-2">
+			@RenderBody()
+		</main>
+	</div>
+
+	<footer class="border-top footer text-muted">
+		<div class="row justify-content-between px-5">
+			<div class="col-md-5">
+				&copy; 2021 - Quickpix
+			</div>
+			<div class="col-md-5 text-right">
+				@await Html.PartialAsync("_SelectLanguagePartial")
+			</div>
+		</div>
+	</footer>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

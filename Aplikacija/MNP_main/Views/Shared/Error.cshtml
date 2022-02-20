@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Html
+@model ErrorViewModel
+@{
+	ViewData["Title"] = "Error";
+}
+
+<div class="jumbotron">
+	<h1 class="text-danger">Error.</h1>
+
+	@if (!string.IsNullOrWhiteSpace(Model.Message))
+	{
+		<p><strong>@(new HtmlString(Model.Message))</strong></p>
+	}
+</div>

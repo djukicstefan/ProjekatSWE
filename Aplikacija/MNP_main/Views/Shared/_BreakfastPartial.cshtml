@@ -1,0 +1,92 @@
+﻿@model Menu
+@using Microsoft.AspNetCore.Http
+@using DAL.Models;
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    string selectedFood = Context.Session.GetString("selectedFood") ?? "";
+    var selectedIds = selectedFood.Split(',').Where(x => int.TryParse(x, out _)).Select(x => int.Parse(x));
+
+    var foods = Model.Foods;
+
+    var orderFoods = foods.Where(x => selectedIds.Contains(x.Id)).ToList();
+
+    Food breakfastMain = orderFoods.Find(x => x.Meal == Food.MealType.Breakfast && x.Type == Food.DishType.Main);
+    Food breakfastDesert = orderFoods.Find(x => x.Meal == Food.MealType.Breakfast && x.Type == Food.DishType.Desert);
+}
+
+<!-- DORUČAK -->
+<div class="container">
+
+    <div class="row d-flex flex-column justify-content-center align-items-center">
+        <h1 class="menu-meal text-center">@Localizer["Breakfast"]</h1>
+    </div>
+
+    <!-- CONTAINER KARTICA-->
+    <div class="row">
+        <!-- KARTICA ZA HRANU -->
+        <div class="col-lg-6 p-2">
+            <div class="card text-center">
+                <img class="card-img-top" src="../img/food-1.jpg" alt="Card image cap">
+                <div class="card-body">
+                    @if (breakfastMain == null)
+                    {
+                        <h4 class="card-title">@Localizer["Main meal"]</h4>
+                        <p class="card-text text-center">
+                            @Localizer["Choose main meal."]
+                        </p>
+                    }
+                    else
+                    {
+                        <h4 class="menu-meal">@breakfastMain.Name</h4>
+                    }
+                    @Html.ActionLink(
+                        Localizer["Choose"].Value,
+                        "SelectFood",
+                        "Food",
+                        routeValues: new
+                        {
+                            mealType = 0,
+                            dishType = 0
+                        },
+                        new { @class = "btn btn-primary" }
+                    )
+                </div>
+            </div>
+        </div>
+        <!-- END OF KARTICA ZA HRANU -->
+
+        <div class="col-lg-6 p-2">
+            <div class="card text-center">
+                <img class="card-img-top" src="../img/food-2.jpg" alt="Card image cap">
+                <div class="card-body">
+                    @if (breakfastDesert == null)
+                    {
+                        <h4 class="card-title">@Localizer["Beverage"]</h4>
+                        <p class="card-text text-center">
+                            @Localizer["Choose beverage."]
+                        </p>
+                    }
+                    else
+                    {
+                        <h4 class="menu-meal">@breakfastDesert.Name</h4>
+                    }
+                    @Html.ActionLink(
+                        Localizer["Choose"].Value,
+                        "SelectFood",
+                        "Food",
+                        routeValues: new
+                        {
+                            mealType = 0,
+                            dishType = 3
+                        },
+                        new { @class = "btn btn-primary" }
+                    )
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END OF CONTAINER KARTICA -->
+</div>
+<!-- END OF DO DORUČAK-->

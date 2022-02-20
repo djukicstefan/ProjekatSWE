@@ -1,0 +1,135 @@
+﻿@model List<DAL.Models.User>
+@inject Microsoft.AspNetCore.Identity.RoleManager<Microsoft.AspNetCore.Identity.IdentityRole> roleManager
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData.Add("Title", Localizer["Users"]);
+}
+
+<table class="col-12 table table-table-responsive text-center">
+    <thead>
+        <tr>
+        <th>Email</th>
+        <th>@Localizer["Phone number"]</th>
+        <th>@Localizer["Balance"]</th>
+        <th>@Localizer["UCMN"]</th>
+        <th>@Localizer["Card number"]</th>
+        <th><button type="button" class="btn btn-primary ml-3 text-center col-10" data-toggle="modal" data-target="#addUserModal">@Localizer["Add user"]</button></th>
+        </tr>
+    </thead>
+    @foreach (var user in Model)
+    {
+        <tr class="editUserRow">
+            <th class="">@user.Email</th>
+            <th class="">@user.PhoneNumber</th>
+            <th class="">@user.Balance</th>
+            <th class="">@user.UMCN</th>
+            <th class="">@user.CardNumber</th>
+            <th class="">
+                @Html.ActionLink(
+         Localizer["Edit"].Value,
+         "EditUser",
+         "Users",
+         routeValues: new
+         {
+             Id = user.Id
+         },
+         htmlAttributes: new
+         {
+             @class = "editBtnTxt btn btn-primary ml-3"
+         }
+     )
+                @if (user.UserName != User.Identity.Name)
+                {
+                    @Html.ActionLink(
+     Localizer["Delete user"].Value,
+     "DeleteUser",
+     "Users",
+     routeValues: new
+     {
+         Id = user.Id
+     },
+     htmlAttributes: new
+     {
+         @class = "deleteBtnTxt btn btn-danger ml-3"
+     }
+ );
+                }
+            </th>
+        </tr>
+    }
+</table>
+
+<div class="modal fade" id="addUserModal" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
+    <div class="modal-dialog col-12 col-md-10 col-lg-9">
+        <form class="modal-content m-5 p-2" method="post" action="/Users/CreateUser">
+            <div class="modal-header font-weight-bold">
+                @Localizer["Add new user"]
+            </div>
+            <div class="modal-body">
+                <div class="form-group form-row justify-content-between">
+                    <div class="form-group flex-grow-1 mr-3">
+                        <label>@Localizer["Username"]</label>
+                        <input class="form-control" type="text" name="UserName" />
+                    </div>
+                    <div class="form-group">
+                        <label>@Localizer["Role"]</label>
+                        <select class="form-control" name="Role">
+                            <option value="User">@Localizer["User"]</option>
+                            @foreach (var role in roleManager.Roles.ToList())
+                            {
+                                <option value="@role.Name">@Localizer[@role.Name]</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group form-row justify-content-between">
+                    <div>
+                        <label>@Localizer["First name"]</label>
+                        <input class="form-control" type="text" name="FirstName" />
+                    </div>
+                    <div>
+                        <label>@Localizer["Last name"]</label>
+                        <input class="form-control" type="text" name="LastName" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>@Localizer["Address"]</label>
+                    <input class="form-control" type="text" name="Address" />
+                </div>
+                <div class="form-group">
+                    <label>@Localizer["Phone number"]</label>
+                    <input class="form-control" type="text" name="PhoneNumber" placeholder="+381 60..." />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input class="form-control" type="text" name="Email" />
+                </div>
+                <div class="form-group form-row justify-content-between">
+                    <div>
+                        <label>@Localizer["Password"]</label>
+                        <input class="form-control" type="password" name="Password" />
+                    </div>
+                    <div>
+                        <label>@Localizer["Confirm password"]</label>
+                        <input class="form-control" type="password" name="ConfirmPassword" />
+                    </div>
+                </div>
+                <div class="form-group form-row justify-content-between">
+                    <div>
+                        <label>@Localizer["UCMN"]</label>
+                        <input class="form-control" type="text" name="UCMN" />
+                    </div>
+                    <div>
+                        <label>@Localizer["Card number"]</label>
+                        <input class="form-control" type="text" name="CardNumber" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer m-0 row justify-content-between">
+                <button class="btn btn-outline-danger" type="reset" data-dismiss="modal">@Localizer["Cancel"]</button>
+                <button class="btn btn-success" type="submit">@Localizer["Submit"]</button>
+            </div>
+        </form>
+    </div>
+</div>

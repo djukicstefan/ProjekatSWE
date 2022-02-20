@@ -1,0 +1,114 @@
+﻿@using DAL.Models 
+@using Microsoft.AspNetCore.Http
+@model Menu
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Home page"];
+
+    string selectedFood = Context.Session.GetString("selectedFood") ?? "";
+    var selectedIds = selectedFood.Split(',').Where(x => int.TryParse(x, out _)).Select(x => int.Parse(x));
+
+    var foods = Model.Foods;
+
+    var orderFoods = foods.Where(x => selectedIds.Contains(x.Id)).ToList();
+
+    Food breakfastMain = orderFoods.Find(x => x.Meal == Food.MealType.Breakfast && x.Type == Food.DishType.Main);
+    Food breakfastDesert = orderFoods.Find(x => x.Meal == Food.MealType.Breakfast && x.Type == Food.DishType.Desert);
+    bool hasBreakfast = breakfastMain != null || breakfastDesert != null;
+
+    Food lunchMain = orderFoods.Find(x => x.Meal == Food.MealType.Lunch && x.Type == Food.DishType.Main);
+    Food lunchSoup = orderFoods.Find(x => x.Meal == Food.MealType.Lunch && x.Type == Food.DishType.Soup);
+    Food lunchSalad = orderFoods.Find(x => x.Meal == Food.MealType.Lunch && x.Type == Food.DishType.Salad);
+    Food lunchDesert = orderFoods.Find(x => x.Meal == Food.MealType.Lunch && x.Type == Food.DishType.Desert);
+    bool hasLunch = lunchMain != null || lunchSoup != null || lunchSalad != null || lunchDesert != null;
+
+    Food dinnerMain = orderFoods.Find(x => x.Meal == Food.MealType.Dinner && x.Type == Food.DishType.Main);
+    Food dinnerSalad = orderFoods.Find(x => x.Meal == Food.MealType.Dinner && x.Type == Food.DishType.Salad);
+    Food dinnerDesert = orderFoods.Find(x => x.Meal == Food.MealType.Dinner && x.Type == Food.DishType.Desert);
+    bool hasDinner = dinnerMain != null || dinnerSalad != null || dinnerDesert != null;
+
+    int price = MNP_main.Helpers.Helpers.CalculatePrice(hasBreakfast, hasLunch, hasDinner);
+}
+
+@SetAntiforgeryCookieAndHeader()
+<div class="text-center">
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <h1 class="menu-title">@Localizer["Menu"]</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <img class="menu-title-divider" src="../img/divider.png" alt="">
+    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        @if (!User.IsInRole("Worker") && !User.IsInRole("Admin") && !User.IsInRole("DeliveryGuy"))
+        {
+<div class="d-flex flex-column justify-content-center align-items-center">
+    @Html.ActionLink(
+        Localizer["Reset selected"].Value,
+        "ResetSelected",
+        "Home",
+        routeValues: null,
+        new { @class = "btn btn-danger" }
+    )
+</div>
+
+            @await Html.PartialAsync("_BreakfastPartial")
+            <br><br>
+            @await Html.PartialAsync("_LunchPartial")
+            <br><br>
+            @await Html.PartialAsync("_DinnerPartial")
+
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <img class="menu-title-divider" src="./img/divider.png" alt="">
+            </div>
+
+            @using (Html.BeginForm("MakeOrder", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                var list = Context.Session.GetString("selectedIds") ?? "";
+
+                foreach (var x in list.Split(','))
+                {
+                    <p>x</p>
+                }
+
+                <textarea name="specialRequest" class="form-control" id="specialRequestArea" rows="3"></textarea>
+                <button type="submit" class="btn btn-success btn-lg w-75"><strong>@Localizer["Pay"]</strong> <small>(@price.00 RSD)</small></button>
+            }
+        }
+        else
+        {
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <h1 class="menu-title">@Localizer["Only user can make the orders."]</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <h1 class="menu-title">@Localizer["Please log in to use application."]</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
